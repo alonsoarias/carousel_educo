@@ -32,52 +32,37 @@ class block_carousel_educo extends block_base {
         $itemsnumber = isset($this->config->itemsnumber) ? $this->config->itemsnumber : 1; // Por defecto un solo slide
         $itemsnumber = min(5, max(1, $itemsnumber)); // Asegurarse de que itemsnumber esté entre 1 y 5
 
-        $indicators = '';
         $slides = '';
         $contextid = $this->context->id;
 
         for ($i = 1; $i <= $itemsnumber; $i++) {
             $active = ($i == 1) ? 'active' : '';
-            $indicators .= '
-            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="' . ($i - 1) . '" class="' . $active . '" aria-current="true" aria-label="Slide ' . $i . '"></button>';
 
             $image = $this->get_image_url($contextid, $i);
             if (empty($image)) {
-                debugging("Using default image for slide $i", DEBUG_DEVELOPER);
                 $image = $this->config->{"item_image$i"};
-            } else {
-                debugging("Using uploaded image for slide $i: $image", DEBUG_DEVELOPER);
             }
 
             $button_html = '';
             if (!empty($this->config->{"item_button$i"})) {
                 $link = !empty($this->config->{"item_link$i"}) ? $this->config->{"item_link$i"} : '#';
-                $button_html = '<a href="' . $link . '" class="btn btn-primary">' . $this->config->{"item_button$i"} . '</a>';
+                $button_html = '<a href="' . $link . '" class="btn btn-primary" style="color: white;">' . $this->config->{"item_button$i"} . '</a>';
             }
 
             $slides .= '
             <div class="carousel-item ' . $active . '">
                 <img src="' . $image . '" class="d-block w-100" alt="' . $this->config->{"item_title$i"} . '">
                 <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0, 0, 0, 0.4);">
-                    <h5>' . $this->config->{"item_title$i"} . '</h5>
-                    <p>' . $this->config->{"item_text$i"} . '</p>
+                    <h5 style="color: white;">' . $this->config->{"item_title$i"} . '</h5>
+                    <p style="color: white;">' . $this->config->{"item_text$i"} . '</p>
                     ' . $button_html . '
                 </div>
             </div>';
         }
 
         $this->content->text = '
-        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-indicators">' . $indicators . '</div>
+        <div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-bs-ride="carousel">
             <div class="carousel-inner">' . $slides . '</div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">' . get_string('previous', 'block_carousel_educo') . '</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">' . get_string('next', 'block_carousel_educo') . '</span>
-            </button>
         </div>';
 
         $this->content->footer = '';
