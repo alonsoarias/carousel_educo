@@ -9,4 +9,10 @@ $string['config_item'] = 'Slide';
 $string['config_title'] = 'Title for slide';
 $string['config_text'] = 'Text for slide';
 $string['config_image'] = 'Image URL for slide';
+$string['config_button'] = 'Button text';
+$string['config_link'] = 'Button URL';
+$string['previous'] = 'Previous';
+$string['next'] = 'Next';
+$string['slide'] = 'Slide';
+$string['see_more'] = 'See more';
 ?>
