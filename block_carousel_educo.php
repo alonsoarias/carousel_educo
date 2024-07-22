@@ -43,9 +43,12 @@ class block_carousel_educo extends block_base {
 
             $image = $this->get_image_url($contextid, $i);
             if (empty($image)) {
+                debugging("Using default image for slide $i", DEBUG_DEVELOPER);
                 $image = $this->config->{"item_image$i"};
+            } else {
+                debugging("Using uploaded image for slide $i: $image", DEBUG_DEVELOPER);
             }
-            
+
             $button_html = '';
             if (!empty($this->config->{"item_button$i"})) {
                 $link = !empty($this->config->{"item_link$i"}) ? $this->config->{"item_link$i"} : '#';
