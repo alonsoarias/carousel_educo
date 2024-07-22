@@ -12,11 +12,12 @@ class block_carousel_educo extends block_base {
         include($CFG->dirroot . '/theme/educo/inc/block_handler/specialization.php'); // Ajuste para el tema educo
         if (empty($this->config)) {
             $this->config = new stdClass();
-            $this->config->itemsnumber = '3';
-            for ($i = 1; $i <= 5; $i++) {
-                $this->config->{"item_title$i"} = "Slide $i Title";
-                $this->config->{"item_text$i"} = "Slide $i Text";
-            }
+            $this->config->itemsnumber = '1'; // Por defecto un solo slide
+            $this->config->item_title1 = "Diapositiva 1 Título";
+            $this->config->item_text1 = "Texto de la Diapositiva 1";
+            $this->config->item_image1 = $CFG->wwwroot . '/theme/educo/pix/slide_country.jpg'; // Imagen por defecto
+            $this->config->item_button1 = ""; // Botón opcional
+            $this->config->item_link1 = ""; // Enlace opcional
         }
     }
 
@@ -28,39 +29,53 @@ class block_carousel_educo extends block_base {
         }
 
         $this->content = new stdClass();
-        $itemsnumber = isset($this->config->itemsnumber) ? $this->config->itemsnumber : 3;
-        $itemsnumber = min(5, max(1, $itemsnumber)); // Ensure itemsnumber is between 1 and 5
+        $itemsnumber = isset($this->config->itemsnumber) ? $this->config->itemsnumber : 1; // Por defecto un solo slide
+        $itemsnumber = min(5, max(1, $itemsnumber)); // Asegurarse de que itemsnumber esté entre 1 y 5
 
         $indicators = '';
-        $inner = '';
+        $slides = '';
         $contextid = $this->context->id;
+
         for ($i = 1; $i <= $itemsnumber; $i++) {
             $active = ($i == 1) ? 'active' : '';
-            $indicators .= '<button data-mdb-target="#carouselEduco" data-mdb-slide-to="' . ($i - 1) . '" class="' . $active . '" aria-label="Slide ' . $i . '"></button>';
+            $indicators .= '
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="' . ($i - 1) . '" class="' . $active . '" aria-current="true" aria-label="Slide ' . $i . '"></button>';
 
             $image = $this->get_image_url($contextid, $i);
-            $inner .= '<div class="carousel-item ' . $active . '">
-                          <img src="' . $image . '" class="d-block w-100 img-fluid" alt="' . $this->config->{"item_title$i"} . '"/>
-                          <div class="carousel-caption d-none d-md-block">
-                              <h5>' . $this->config->{"item_title$i"} . '</h5>
-                              <p>' . $this->config->{"item_text$i"} . '</p>
-                          </div>
-                       </div>';
+            if (empty($image)) {
+                $image = $this->config->{"item_image$i"};
+            }
+            
+            $button_html = '';
+            if (!empty($this->config->{"item_button$i"})) {
+                $link = !empty($this->config->{"item_link$i"}) ? $this->config->{"item_link$i"} : '#';
+                $button_html = '<a href="' . $link . '" class="btn btn-primary">' . $this->config->{"item_button$i"} . '</a>';
+            }
+
+            $slides .= '
+            <div class="carousel-item ' . $active . '">
+                <img src="' . $image . '" class="d-block w-100" alt="' . $this->config->{"item_title$i"} . '">
+                <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0, 0, 0, 0.4);">
+                    <h5>' . $this->config->{"item_title$i"} . '</h5>
+                    <p>' . $this->config->{"item_text$i"} . '</p>
+                    ' . $button_html . '
+                </div>
+            </div>';
         }
 
         $this->content->text = '
-            <div id="carouselEduco" class="carousel slide carousel-fade carousel-dark" data-mdb-ride="carousel">
-              <div class="carousel-indicators">' . $indicators . '</div>
-              <div class="carousel-inner">' . $inner . '</div>
-              <button class="carousel-control-prev" type="button" data-mdb-target="#carouselEduco" data-mdb-slide="prev">
+        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">' . $indicators . '</div>
+            <div class="carousel-inner">' . $slides . '</div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-mdb-target="#carouselEduco" data-mdb-slide="next">
+                <span class="visually-hidden">' . get_string('previous', 'block_carousel_educo') . '</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
-            </div>';
+                <span class="visually-hidden">' . get_string('next', 'block_carousel_educo') . '</span>
+            </button>
+        </div>';
 
         $this->content->footer = '';
         return $this->content;
