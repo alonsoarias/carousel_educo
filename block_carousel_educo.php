@@ -16,13 +16,12 @@ class block_carousel_educo extends block_base {
             for ($i = 1; $i <= 5; $i++) {
                 $this->config->{"item_title$i"} = "Slide $i Title";
                 $this->config->{"item_text$i"} = "Slide $i Text";
-                $this->config->{"item_image$i"} = "";
             }
         }
     }
 
     public function get_content() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         if ($this->content !== null) {
             return $this->content;
@@ -34,11 +33,14 @@ class block_carousel_educo extends block_base {
 
         $indicators = '';
         $inner = '';
+        $contextid = $this->context->id;
         for ($i = 1; $i <= $itemsnumber; $i++) {
             $active = ($i == 1) ? 'active' : '';
             $indicators .= '<button data-mdb-target="#carouselEduco" data-mdb-slide-to="' . ($i - 1) . '" class="' . $active . '" aria-label="Slide ' . $i . '"></button>';
+
+            $image = $this->get_image_url($contextid, $i);
             $inner .= '<div class="carousel-item ' . $active . '">
-                          <img src="' . educo_block_image_process($this->config->{"item_image$i"}) . '" class="d-block w-100 img-fluid" alt="' . $this->config->{"item_title$i"} . '"/>
+                          <img src="' . $image . '" class="d-block w-100 img-fluid" alt="' . $this->config->{"item_title$i"} . '"/>
                           <div class="carousel-caption d-none d-md-block">
                               <h5>' . $this->config->{"item_title$i"} . '</h5>
                               <p>' . $this->config->{"item_text$i"} . '</p>
@@ -62,6 +64,16 @@ class block_carousel_educo extends block_base {
 
         $this->content->footer = '';
         return $this->content;
+    }
+
+    private function get_image_url($contextid, $itemid) {
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($contextid, 'block_carousel_educo', 'content', $itemid, 'sortorder', false);
+        if (count($files) == 1) {
+            $file = reset($files);
+            return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+        }
+        return '';
     }
 
     function instance_allow_multiple() {
