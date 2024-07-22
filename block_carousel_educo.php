@@ -1,6 +1,7 @@
 <?php
 global $CFG;
-require_once($CFG->dirroot . '/theme/edash/inc/block_handler/get-content.php');
+require_once($CFG->dirroot . '/theme/educo/inc/block_handler/get-content.php'); // Ajuste para el tema educo
+
 class block_carousel_educo extends block_base {
     public function init() {
         $this->title = get_string('pluginname', 'block_carousel_educo');
@@ -8,7 +9,7 @@ class block_carousel_educo extends block_base {
 
     public function specialization() {
         global $CFG;
-        include($CFG->dirroot . '/theme/edash/inc/block_handler/specialization.php');
+        include($CFG->dirroot . '/theme/educo/inc/block_handler/specialization.php'); // Ajuste para el tema educo
         if (empty($this->config)) {
             $this->config = new stdClass();
             $this->config->itemsnumber = '3';
@@ -37,7 +38,7 @@ class block_carousel_educo extends block_base {
             $active = ($i == 1) ? 'active' : '';
             $indicators .= '<button data-mdb-target="#carouselEduco" data-mdb-slide-to="' . ($i - 1) . '" class="' . $active . '" aria-label="Slide ' . $i . '"></button>';
             $inner .= '<div class="carousel-item ' . $active . '">
-                          <img src="' . edash_block_image_process($this->config->{"item_image$i"}) . '" class="d-block w-100 img-fluid" alt="' . $this->config->{"item_title$i"} . '"/>
+                          <img src="' . educo_block_image_process($this->config->{"item_image$i"}) . '" class="d-block w-100 img-fluid" alt="' . $this->config->{"item_title$i"} . '"/>
                           <div class="carousel-caption d-none d-md-block">
                               <h5>' . $this->config->{"item_title$i"} . '</h5>
                               <p>' . $this->config->{"item_text$i"} . '</p>
