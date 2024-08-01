@@ -1,5 +1,4 @@
 <?php
-global $CFG;
 
 class block_carousel_educo extends block_base {
     public function init() {
@@ -27,8 +26,8 @@ class block_carousel_educo extends block_base {
         }
 
         $this->content = new stdClass();
-        $itemsnumber = isset($this->config->itemsnumber) ? $this->config->itemsnumber : 1; // Por defecto un solo slide
-        $itemsnumber = min(5, max(1, $itemsnumber)); // Asegurarse de que itemsnumber esté entre 1 y 5
+        $itemsnumber = isset($this->config->itemsnumber) ? $this->config->itemsnumber : 1;
+        $itemsnumber = min(5, max(1, $itemsnumber));
 
         $slides = '';
         $contextid = $this->context->id;
@@ -36,9 +35,17 @@ class block_carousel_educo extends block_base {
         for ($i = 1; $i <= $itemsnumber; $i++) {
             $active = ($i == 1) ? 'active' : '';
 
+            // Usa la función para obtener la URL de la imagen
             $image = $this->get_image_url($contextid, $i);
             if (empty($image)) {
                 $image = $this->config->{"item_image$i"};
+            }
+
+            // Debugging: Check image URL
+            if ($image) {
+                $debug_message = "Image $i URL: $image";
+            } else {
+                $debug_message = "Image $i not found.";
             }
 
             $button_html = '';
@@ -56,20 +63,22 @@ class block_carousel_educo extends block_base {
                     ' . $button_html . '
                 </div>
             </div>';
+            
+            // Add debug message for each slide
+            $slides .= '<div style="color: red; font-size: small;">' . $debug_message . '</div>';
         }
 
-        // Añadir data-bs-interval para establecer la duración de la transición automática
         $this->content->text = '
         <div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
             <div class="carousel-inner">' . $slides . '</div>
-            <a class="carousel-control-prev" href="#carouselExampleSlidesOnly" role="button" data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleSlidesOnly" role="button" data-bs-slide="next">
+                <span class="visually-hidden">' . get_string('previous', 'block_carousel_educo') . '</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </a>
+                <span class="visually-hidden">' . get_string('next', 'block_carousel_educo') . '</span>
+            </button>
         </div>';
 
         $this->content->footer = '';
@@ -89,7 +98,7 @@ class block_carousel_educo extends block_base {
                     $file->get_itemid(),
                     $file->get_filepath(),
                     $file->get_filename()
-                );
+                )->out(false);
             }
         }
         return '';
