@@ -5,50 +5,40 @@ class block_carousel_educo_edit_form extends block_edit_form {
     protected function specific_definition($mform) {
         global $CFG;
 
-        // Obtener el número de elementos configurado, por defecto 1
         $itemsnumber = 1;
         if (isset($this->block->config->itemsnumber)) {
             $itemsnumber = $this->block->config->itemsnumber;
         }
 
-        // Añadir el encabezado del formulario
         $mform->addElement('header', 'config_header', get_string('blocksettings', 'block_carousel_educo'));
 
-        // Selector de número de elementos (entre 1 y 5)
         $itemsrange = range(1, 5);
         $mform->addElement('select', 'config_itemsnumber', get_string('config_itemsnumber', 'block_carousel_educo'), $itemsrange);
         $mform->setDefault('config_itemsnumber', 1);
 
-        // Bucle para crear configuraciones para cada elemento del carrusel
         for ($i = 1; $i <= 5; $i++) {
             $mform->addElement('header', 'config_edash_item' . $i, get_string('config_item', 'block_carousel_educo') . " $i");
 
-            // Campo de texto para el título del elemento
             $mform->addElement('text', 'config_item_title' . $i, get_string('config_title', 'block_carousel_educo', $i));
             $mform->setDefault('config_item_title' . $i, "Curso $i Título");
             $mform->setType('config_item_title' . $i, PARAM_TEXT);
 
-            // Área de texto para el contenido del elemento
             $mform->addElement('textarea', 'config_item_text' . $i, get_string('config_text', 'block_carousel_educo', $i));
             $mform->setDefault('config_item_text' . $i, "Texto de la Diapositiva $i");
             $mform->setType('config_item_text' . $i, PARAM_TEXT);
 
-            // Gestor de archivos para la imagen del elemento
             $mform->addElement('filemanager', 'config_item_image' . $i, get_string('config_image', 'block_carousel_educo', $i), null, array('accepted_types' => array('image')));
 
-            // Campo de texto para el botón del elemento
             $mform->addElement('text', 'config_item_button' . $i, get_string('config_button', 'block_carousel_educo', $i));
             $mform->setDefault('config_item_button' . $i, "");
             $mform->setType('config_item_button' . $i, PARAM_TEXT);
 
-            // Campo de texto para el enlace del elemento
             $mform->addElement('text', 'config_item_link' . $i, get_string('config_link', 'block_carousel_educo', $i));
             $mform->setDefault('config_item_link' . $i, "");
             $mform->setType('config_item_link' . $i, PARAM_URL);
         }
     }
 
-    // Método para preparar los datos del formulario con imágenes en borrador
     public function set_data($defaults) {
         if (isset($this->block->config)) {
             $contextid = $this->block->context->id;
@@ -61,7 +51,6 @@ class block_carousel_educo_edit_form extends block_edit_form {
         parent::set_data($defaults);
     }
 
-    // Método para guardar los datos del formulario
     public function get_data() {
         $data = parent::get_data();
         if ($data !== null) {
