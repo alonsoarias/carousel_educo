@@ -1,6 +1,5 @@
 <?php
 global $CFG;
-require_once($CFG->dirroot . '/theme/educo/inc/block_handler/get-content.php'); // Ajuste para el tema educo
 
 class block_carousel_educo extends block_base {
     public function init() {
@@ -9,7 +8,6 @@ class block_carousel_educo extends block_base {
 
     public function specialization() {
         global $CFG;
-        include($CFG->dirroot . '/theme/educo/inc/block_handler/specialization.php'); // Ajuste para el tema educo
         if (empty($this->config)) {
             $this->config = new stdClass();
             $this->config->itemsnumber = '1'; // Por defecto un solo slide
@@ -60,9 +58,18 @@ class block_carousel_educo extends block_base {
             </div>';
         }
 
+        // Añadir data-bs-interval para establecer la duración de la transición automática
         $this->content->text = '
-        <div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
             <div class="carousel-inner">' . $slides . '</div>
+            <a class="carousel-control-prev" href="#carouselExampleSlidesOnly" role="button" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleSlidesOnly" role="button" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </a>
         </div>';
 
         $this->content->footer = '';
@@ -72,9 +79,18 @@ class block_carousel_educo extends block_base {
     private function get_image_url($contextid, $itemid) {
         $fs = get_file_storage();
         $files = $fs->get_area_files($contextid, 'block_carousel_educo', 'content', $itemid, 'sortorder', false);
-        if (count($files) == 1) {
-            $file = reset($files);
-            return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+
+        foreach ($files as $file) {
+            if (!$file->is_directory()) {
+                return moodle_url::make_pluginfile_url(
+                    $file->get_contextid(),
+                    $file->get_component(),
+                    $file->get_filearea(),
+                    $file->get_itemid(),
+                    $file->get_filepath(),
+                    $file->get_filename()
+                );
+            }
         }
         return '';
     }
