@@ -40,8 +40,16 @@ class block_carousel_educo extends block_base {
             $data->itemsnumber = 1;
         }
 
-        $text = '<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">';
+        $text = '<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">';
+
+        // Generate carousel indicators
+        for ($i = 0; $i < $data->itemsnumber; $i++) {
+            $active = ($i == 0) ? 'class="active"' : '';
+            $text .= '<li data-target="#carouselExampleIndicators" data-slide-to="' . $i . '" ' . $active . '></li>';
+        }
+
+        $text .= '</ol><div class="carousel-inner">';
 
         if ($data->itemsnumber > 0) {
             $fs = get_file_storage();
@@ -77,14 +85,6 @@ class block_carousel_educo extends block_base {
         }
 
         $text .= '</div>
-            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
         </div>';
 
         $this->content->footer = '';
