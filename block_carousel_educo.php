@@ -74,7 +74,7 @@ class block_carousel_educo extends block_base {
 
                 $text .= '
                 <div class="carousel-item ' . $active . '">
-                    <img src="' . $imageurl . '" class="d-block w-100" alt="' . $item_title . '">
+                    <img src="' . $imageurl . '" class="d-block w-100" style="height: 550px; object-fit: cover;" alt="' . $item_title . '">
                     <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0, 0, 0, 0.4);">
                         <h5 style="color: white;">' . $item_title . '</h5>
                         <p style="color: white;">' . $item_text . '</p>
@@ -84,8 +84,7 @@ class block_carousel_educo extends block_base {
             }
         }
 
-        $text .= '</div>
-        </div>';
+        $text .= '</div></div>';
 
         $this->content->footer = '';
         $this->content->text = $text;
