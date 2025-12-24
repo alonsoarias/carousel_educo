@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/theme/edash/inc/block_handler/get-content.php');
+
 class block_carousel_educo extends block_base {
 
     /**
@@ -37,13 +40,14 @@ class block_carousel_educo extends block_base {
      * Set default configuration when block is first added.
      */
     public function specialization() {
-        global $CFG, $OUTPUT;
+        global $CFG;
 
         if (empty($this->config)) {
             $this->config = new stdClass();
             $this->config->itemsnumber = 1;
             $this->config->item_title1 = get_string('slide', 'block_carousel_educo') . ' 1';
             $this->config->item_text1 = '';
+            $this->config->item_image1 = $CFG->wwwroot . '/theme/educo/pix/slide_country.jpg';
             $this->config->item_button1 = '';
             $this->config->item_link1 = '';
         }
@@ -110,10 +114,13 @@ class block_carousel_educo extends block_base {
             // Get image URL from file storage
             $imageurl = $this->get_image_url($context->id, $i);
 
-            // If no image, use a placeholder
+            // If no image uploaded, check config or use default from theme
             if (empty($imageurl)) {
-                // Use Moodle's default placeholder or a simple gradient background
-                $imageurl = $OUTPUT->image_url('f/image', 'core')->out(false);
+                if (!empty($data->{'item_image' . $i})) {
+                    $imageurl = $data->{'item_image' . $i};
+                } else {
+                    $imageurl = $CFG->wwwroot . '/theme/educo/pix/slide_country.jpg';
+                }
             }
 
             // Get slide content with proper sanitization
