@@ -153,31 +153,26 @@ class block_carousel_educo extends block_base {
                 }
             }
 
-            // Build slide HTML
+            // Build slide HTML with original styles
             $html .= '<div class="carousel-item' . $activeClass . '">';
-            $html .= '<div class="carousel-image-wrapper" style="position: relative; width: 100%; height: 0; padding-bottom: 40%; min-height: 300px; max-height: 550px; overflow: hidden;">';
-            $html .= '<img src="' . s($imageurl) . '" class="d-block" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" alt="' . s($itemTitle) . '">';
-            $html .= '</div>';
+            $html .= '<img src="' . s($imageurl) . '" class="d-block w-100" style="height: 550px; object-fit: cover;" alt="' . s($itemTitle) . '">';
 
-            // Caption overlay (only if there's content)
-            if (!empty($itemTitle) || !empty($itemText) || !empty($buttonText)) {
-                $html .= '<div class="carousel-caption d-md-block" style="background-color: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 5px;">';
+            // Caption overlay
+            $html .= '<div class="carousel-caption d-none d-md-block" style="background-color: rgba(0, 0, 0, 0.4);">';
 
-                if (!empty($itemTitle)) {
-                    $html .= '<h3 style="color: #ffffff; margin-bottom: 10px;">' . $itemTitle . '</h3>';
-                }
-
-                if (!empty($itemText)) {
-                    $html .= '<p style="color: #ffffff; font-size: 16px; margin-bottom: 10px;">' . $itemText . '</p>';
-                }
-
-                if (!empty($buttonText) && !empty($buttonLink)) {
-                    $html .= '<a href="' . s($buttonLink) . '" class="btn btn-primary">' . $buttonText . '</a>';
-                }
-
-                $html .= '</div>';
+            if (!empty($itemTitle)) {
+                $html .= '<h2 style="color: white;">' . $itemTitle . '</h2>';
             }
 
+            if (!empty($itemText)) {
+                $html .= '<p style="color: white; font-size: 20px;">' . $itemText . '</p>';
+            }
+
+            if (!empty($buttonText) && !empty($buttonLink)) {
+                $html .= '<a href="' . s($buttonLink) . '" class="btn btn-primary" style="color: white;">' . $buttonText . '</a>';
+            }
+
+            $html .= '</div>';
             $html .= '</div>'; // End carousel-item
         }
 
@@ -194,31 +189,6 @@ class block_carousel_educo extends block_base {
         $html .= '</a>';
 
         $html .= '</div>'; // End carousel
-
-        // Add custom CSS for better responsiveness
-        $html .= '<style>
-            #' . $carouselid . ' .carousel-image-wrapper {
-                background-color: #f0f0f0;
-            }
-            #' . $carouselid . ' .carousel-caption {
-                bottom: 10%;
-                left: 10%;
-                right: 10%;
-            }
-            @media (max-width: 768px) {
-                #' . $carouselid . ' .carousel-image-wrapper {
-                    padding-bottom: 60%;
-                    min-height: 200px;
-                }
-                #' . $carouselid . ' .carousel-caption h3 {
-                    font-size: 18px;
-                }
-                #' . $carouselid . ' .carousel-caption p {
-                    font-size: 14px;
-                    display: none;
-                }
-            }
-        </style>';
 
         $this->content->text = $html;
 
