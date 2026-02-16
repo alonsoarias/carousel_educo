@@ -73,7 +73,7 @@ class block_carousel_educo_edit_form extends block_edit_form {
             'maxbytes' => $CFG->maxbytes,
             'areamaxbytes' => 10485760, // 10MB
             'maxfiles' => 1,
-            'accepted_types' => array('.jpg', '.jpeg', '.png', '.gif', '.webp')
+            'accepted_types' => array('web_image')
         );
 
         // Create form fields for each slide (always show fields for current configured number)
@@ -82,12 +82,8 @@ class block_carousel_educo_edit_form extends block_edit_form {
             // Slide header
             $mform->addElement('header', 'config_slide_header' . $i, get_string('config_item', 'block_carousel_educo', $i));
 
-            // Collapse non-active slides by default
-            if ($i > $itemsnumber) {
-                $mform->setExpanded('config_slide_header' . $i, false);
-            } else {
-                $mform->setExpanded('config_slide_header' . $i, true);
-            }
+            // All slides expanded; hideIf controls visibility dynamically
+            $mform->setExpanded('config_slide_header' . $i, true);
 
             // Title field
             $mform->addElement('text', 'config_item_title' . $i, get_string('config_title', 'block_carousel_educo', $i));
@@ -114,6 +110,24 @@ class block_carousel_educo_edit_form extends block_edit_form {
                 array('size' => 50));
             $mform->setDefault('config_item_link' . $i, '');
             $mform->setType('config_item_link' . $i, PARAM_URL);
+
+            // Dynamic visibility: hide slide sections beyond the selected number.
+            // hideIf with 'eq' acts as OR when called multiple times on the same element.
+            if ($i > 1) {
+                $slideelements = array(
+                    'config_slide_header' . $i,
+                    'config_item_title' . $i,
+                    'config_item_text' . $i,
+                    'config_item_image' . $i,
+                    'config_item_button' . $i,
+                    'config_item_link' . $i,
+                );
+                for ($j = 1; $j < $i; $j++) {
+                    foreach ($slideelements as $element) {
+                        $mform->hideIf($element, 'config_itemsnumber', 'eq', (string)$j);
+                    }
+                }
+            }
         }
     }
 
@@ -137,7 +151,7 @@ class block_carousel_educo_edit_form extends block_edit_form {
                     'block_carousel_educo',
                     self::FILE_AREA,
                     $i,
-                    array('subdirs' => 0, 'maxfiles' => 1)
+                    array('subdirs' => 0, 'maxfiles' => 1, 'accepted_types' => array('web_image'))
                 );
 
                 $defaults->{'config_item_image' . $i} = $draftitemid;
@@ -179,7 +193,7 @@ class block_carousel_educo_edit_form extends block_edit_form {
                         'block_carousel_educo',
                         self::FILE_AREA,
                         $i,
-                        array('subdirs' => 0, 'maxfiles' => 1)
+                        array('subdirs' => 0, 'maxfiles' => 1, 'accepted_types' => array('web_image'))
                     );
                 }
             }
