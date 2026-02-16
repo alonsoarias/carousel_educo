@@ -138,10 +138,16 @@ class block_carousel_educo_edit_form extends block_edit_form {
      * @param stdClass $defaults Default values for the form.
      */
     public function set_data($defaults) {
+        // Call parent first so block config values are processed.
+        parent::set_data($defaults);
+
+        // Now override filemanager fields with fresh draft area IDs.
+        // parent::set_data may have set stale integer values from the saved
+        // block config, which are no longer valid draft area references.
         if (!empty($this->block->instance->id)) {
             $context = context_block::instance($this->block->instance->id);
+            $filemanagerdefaults = array();
 
-            // Prepare file areas for all possible slides
             for ($i = 1; $i <= self::MAX_SLIDES; $i++) {
                 $draftitemid = file_get_submitted_draft_itemid('config_item_image' . $i);
 
@@ -154,11 +160,13 @@ class block_carousel_educo_edit_form extends block_edit_form {
                     array('subdirs' => 0, 'maxfiles' => 1, 'accepted_types' => array('web_image'))
                 );
 
-                $defaults->{'config_item_image' . $i} = $draftitemid;
+                $filemanagerdefaults['config_item_image' . $i] = $draftitemid;
             }
-        }
 
-        parent::set_data($defaults);
+            // Inject correct draft IDs after parent processing to ensure
+            // the file manager displays the actual stored images.
+            $this->_form->setDefaults($filemanagerdefaults);
+        }
     }
 
     /**
